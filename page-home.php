@@ -14,24 +14,23 @@ get_header();
 
 <div id="velocityslider" class="carousel slide mx-minus-3" data-bs-ride="carousel">
   <div class="carousel-inner">
-    <?php for($x = 1; $x <= 10; $x++){
-        if($x == '1'){
-            $class = ' active';
-        } else {
-            $class = '';
-        }
-        $img_id = velocitytheme_option('home_slider'.$x, '');
-        if($img_id){
-            $img_url = aq_resize(wp_get_attachment_image_url($img_id,''),1000,400,true,true,true);
-            echo '<div class="carousel-item'.$class.'">';
-                if($img_url){
-                    echo '<img src="'.$img_url.'" class="d-block w-100">';
-                } else {
-                    echo '<svg style="background-color:#ececec;width:100%;height:auto;" width="1000" height="400"></svg>';
-                }
-            echo '</div>';
-        }
-    } ?>
+    <?php
+	$slider_items = velocitychild_get_home_slider_items();
+	foreach ($slider_items as $index => $slider_item) {
+		$class  = (0 === $index) ? ' active' : '';
+		$img_id = isset($slider_item['image_id']) ? absint($slider_item['image_id']) : 0;
+		if ($img_id) {
+			$img_url = wp_get_attachment_image_url($img_id, 'full');
+			echo '<div class="carousel-item' . $class . '">';
+			if ($img_url) {
+				echo '<img src="' . esc_url($img_url) . '" class="d-block w-100" alt="">';
+			} else {
+				echo '<svg style="background-color:#ececec;width:100%;height:auto;" width="1000" height="400" aria-hidden="true"></svg>';
+			}
+			echo '</div>';
+		}
+	}
+	?>
   </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#velocityslider" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -45,71 +44,81 @@ get_header();
 
 
 <?php
-    echo '<div class="row mx-minus-3">';      
-        for($x = 1; $x <= 4; $x++){
-            $hs_img = velocitytheme_option('hs_img'.$x, '');
-            $hs_icon = velocitytheme_option('hs_icon'.$x, '');
-            $hs_text = velocitytheme_option('hs_text'.$x, '');
-            $hs_url = velocitytheme_option('hs_url'.$x, '');
+	echo '<div class="row mx-minus-3">';
+	$services_items = velocitychild_get_home_services_items();
+	foreach ($services_items as $service_item) {
+		$hs_img  = isset($service_item['image_id']) ? absint($service_item['image_id']) : 0;
+		$hs_icon = isset($service_item['icon']) ? (string) $service_item['icon'] : '';
+		$hs_text = isset($service_item['text']) ? (string) $service_item['text'] : '';
+		$hs_url  = isset($service_item['url']) ? (string) $service_item['url'] : '';
 
-            if($hs_icon || $hs_text){
-                if($hs_img){
-                    $bg = ' style="background-image:url('.wp_get_attachment_image_url($hs_img,'').')"';
-                } else {
-                    $bg = '';
-                }
-                echo '<div class="col-sm-6 col-md p-0">';
-                    echo '<div class="h-100 text-center m-0 p-3 pt-4 text-white bg-dark velocity-service position-relative"'.$bg.'>';
-                        if($hs_icon){
-                            echo '<div class="position-relative z-index mb-2">';
-                                echo '<i class="velocity-hs-icon fa '.$hs_icon.'"></i>';
-                            echo '</div>';
-                        } if($hs_text){
-                            echo '<div class="py-2 position-relative z-index">';
-                                echo $hs_text;
-                            echo '</div>';
-                        } if($hs_url){
-                            echo '<a class="velocity-hs-link" href="'.$hs_url.'"></a>';
-                        }
-                    echo '</div>';
-                echo '</div>';
-            }
-        }
-    echo '</div>';
+		if ($hs_icon || $hs_text) {
+			$bg = '';
+			if ($hs_img) {
+				$bg_url = wp_get_attachment_image_url($hs_img, 'full');
+				if ($bg_url) {
+					$bg = ' style="background-image:url(' . esc_url($bg_url) . ')"';
+				}
+			}
+
+			echo '<div class="col-sm-6 col-md p-0">';
+			echo '<div class="h-100 text-center m-0 p-3 pt-4 text-white bg-dark velocity-service position-relative"' . $bg . '>';
+			if ($hs_icon) {
+				echo '<div class="position-relative z-index mb-2">';
+				echo '<span class="velocity-hs-icon">' . velocitychild_get_bootstrap_icon_html($hs_icon) . '</span>';
+				echo '</div>';
+			}
+			if ($hs_text) {
+				echo '<div class="py-2 position-relative z-index">';
+				echo wp_kses_post($hs_text);
+				echo '</div>';
+			}
+			if ($hs_url) {
+				echo '<a class="velocity-hs-link" href="' . esc_url($hs_url) . '"></a>';
+			}
+			echo '</div>';
+			echo '</div>';
+		}
+	}
+	echo '</div>';
 ?>
 
 
 <?php
-$args['post_type'] = 'post';
-$args['showposts'] = 3;
+$args = array(
+	'post_type'      => 'post',
+	'posts_per_page' => 3,
+);
+
 $home_news = velocitytheme_option('home_news', '');
-if($home_news){
-    $args['cat'] = $home_news;
+if (!empty($home_news)) {
+	$args['cat'] = absint($home_news);
 }
+
 $posts = get_posts($args);
-if($posts){
-echo '<div class="m-1 py-3">';
-    echo '<h2 class="fs-4 fw-bold text-dark">'.velocitytheme_option('hn_title', '').'</h2>';
-    echo '<div class="row">';
-    foreach($posts as $post) {
-        $trimmed_content = wp_trim_words($post->post_content,20 );
-        $link = get_the_permalink($post->ID);
-        echo '<div class="col-sm mb-4">';
-            echo '<div class="mb-2">';
-                echo do_shortcode('[resize-thumbnail width="350" height="250" linked="true" post_id="'.$post->ID.'"]');
-            echo '</div>';
-            echo '<small class="text-muted">'.get_the_date('',$post->ID).'</small>';
-            echo '<div class="fs-6 mb-2 lh-sm fw-bold">';
-                echo '<a class="text-dark" href="'.$link.'">'.$post->post_title.'</a>';
-            echo '</div>';
-            echo $trimmed_content;
-            echo '<div class="mt-2">';
-                echo '<a class="btn btn-primary btn-sm px-3" href="'.$link.'">Selengkapnya</a>';
-            echo '</div>';
-        echo '</div>';
-    }
-    echo '</div>';
-echo '</div>';
+if ($posts) {
+	echo '<div class="m-1 py-3">';
+	echo '<h2 class="fs-4 fw-bold text-dark">' . esc_html(velocitytheme_option('hn_title', '')) . '</h2>';
+	echo '<div class="row">';
+	foreach ($posts as $post) {
+		$trimmed_content = wp_trim_words(wp_strip_all_tags($post->post_content), 20);
+		$link            = get_the_permalink($post->ID);
+		echo '<div class="col-sm mb-4">';
+		echo '<div class="mb-2">';
+		echo velocitychild_get_post_thumbnail_html($post->ID, array('ratio' => '4x3'));
+		echo '</div>';
+		echo '<small class="text-muted">' . esc_html(get_the_date('', $post->ID)) . '</small>';
+		echo '<div class="fs-6 mb-2 lh-sm fw-bold">';
+		echo '<a class="text-dark" href="' . esc_url($link) . '">' . esc_html($post->post_title) . '</a>';
+		echo '</div>';
+		echo esc_html($trimmed_content);
+		echo '<div class="mt-2">';
+		echo '<a class="btn btn-primary btn-sm px-3" href="' . esc_url($link) . '">Selengkapnya</a>';
+		echo '</div>';
+		echo '</div>';
+	}
+	echo '</div>';
+	echo '</div>';
 }
 ?>
 

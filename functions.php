@@ -23,8 +23,9 @@
  $includes = [
 	'enqueue.php',
 	'function-child.php',
+	'icons.php',
+	'media.php',
 	'shortcodes.php',
-	'fontawesome.php',
  ];
 
  foreach( $includes as $include ) {
