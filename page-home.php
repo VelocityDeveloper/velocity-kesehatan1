@@ -22,21 +22,23 @@ get_header();
 		if ($img_id) {
 			$img_url = wp_get_attachment_image_url($img_id, 'full');
 			echo '<div class="carousel-item' . $class . '">';
+			echo '<div class="velocity-slider-ratio">';
 			if ($img_url) {
-				echo '<img src="' . esc_url($img_url) . '" class="d-block w-100" alt="">';
+				echo '<img src="' . esc_url($img_url) . '" class="velocity-slider-media" alt="">';
 			} else {
-				echo '<svg style="background-color:#ececec;width:100%;height:auto;" width="1000" height="400" aria-hidden="true"></svg>';
+				echo '<div class="velocity-slider-placeholder" aria-hidden="true"></div>';
 			}
+			echo '</div>';
 			echo '</div>';
 		}
 	}
 	?>
   </div>
-  <button class="carousel-control-prev" type="button" data-bs-target="#velocityslider" data-bs-slide="prev">
+  <button class="carousel-control-prev w-auto px-3" type="button" data-bs-target="#velocityslider" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Previous</span>
   </button>
-  <button class="carousel-control-next" type="button" data-bs-target="#velocityslider" data-bs-slide="next">
+  <button class="carousel-control-next w-auto px-3" type="button" data-bs-target="#velocityslider" data-bs-slide="next">
     <span class="carousel-control-next-icon" aria-hidden="true"></span>
     <span class="visually-hidden">Next</span>
   </button>
@@ -98,7 +100,7 @@ if (!empty($home_news)) {
 $posts = get_posts($args);
 if ($posts) {
 	echo '<div class="m-1 py-3">';
-	echo '<h2 class="fs-4 fw-bold text-dark">' . esc_html(velocitytheme_option('hn_title', '')) . '</h2>';
+	echo '<h2 class="fs-4 fw-bold text-dark mb-3">' . esc_html(velocitytheme_option('hn_title', '')) . '</h2>';
 	echo '<div class="row">';
 	foreach ($posts as $post) {
 		$trimmed_content = wp_trim_words(wp_strip_all_tags($post->post_content), 20);
@@ -107,13 +109,13 @@ if ($posts) {
 		echo '<div class="mb-2">';
 		echo velocitychild_get_post_thumbnail_html($post->ID, array('ratio' => '4x3'));
 		echo '</div>';
-		echo '<small class="text-muted">' . esc_html(get_the_date('', $post->ID)) . '</small>';
+		echo '<small class="text-muted d-block mb-1">' . esc_html(get_the_date('', $post->ID)) . '</small>';
 		echo '<div class="fs-6 mb-2 lh-sm fw-bold">';
 		echo '<a class="text-dark" href="' . esc_url($link) . '">' . esc_html($post->post_title) . '</a>';
 		echo '</div>';
 		echo esc_html($trimmed_content);
 		echo '<div class="mt-2">';
-		echo '<a class="btn btn-primary btn-sm px-3" href="' . esc_url($link) . '">Selengkapnya</a>';
+		echo '<a class="btn btn-primary btn-sm px-3 py-2" href="' . esc_url($link) . '">Selengkapnya</a>';
 		echo '</div>';
 		echo '</div>';
 	}

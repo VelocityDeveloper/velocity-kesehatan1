@@ -224,6 +224,10 @@ if (!function_exists('velocitychild_get_services_repeater_fields')) {
 			'icon' => array(
 				'type'    => 'select',
 				'label'   => __('Icon', 'justg'),
+				'description' => sprintf(
+					__('Referensi icon: <a href="%s" target="_blank" rel="noopener noreferrer">icons.getbootstrap.com</a>', 'justg'),
+					esc_url('https://icons.getbootstrap.com/')
+				),
 				'default' => velocitychild_get_default_service_icon(),
 				'choices' => velocitychild_get_bootstrap_icon_choices(),
 			),
@@ -476,7 +480,7 @@ if (!class_exists('Velocitychild_Repeater_Control') && class_exists('WP_Customiz
 							$image_id  = absint($field_value);
 							$image_url = $image_id ? wp_get_attachment_image_url($image_id, 'thumbnail') : '';
 							?>
-							<label class="velocity-repeater-field">
+							<div class="velocity-repeater-field">
 								<span class="velocity-repeater-field-label"><?php echo esc_html($field_label); ?></span>
 								<div class="velocity-repeater-image-field">
 									<input type="hidden" data-field="<?php echo esc_attr($field_key); ?>" data-default="<?php echo esc_attr($field_default); ?>" value="<?php echo esc_attr($image_id); ?>">
@@ -491,15 +495,15 @@ if (!class_exists('Velocitychild_Repeater_Control') && class_exists('WP_Customiz
 									</div>
 								</div>
 								<?php if (!empty($field_desc)) : ?>
-									<span class="description customize-control-description"><?php echo esc_html($field_desc); ?></span>
+									<span class="description customize-control-description"><?php echo wp_kses_post($field_desc); ?></span>
 								<?php endif; ?>
-							</label>
+							</div>
 						<?php elseif ('editor' === $field_type) : ?>
 							<label class="velocity-repeater-field">
 								<span class="velocity-repeater-field-label"><?php echo esc_html($field_label); ?></span>
 								<textarea class="velocity-repeater-editor" rows="6" data-field="<?php echo esc_attr($field_key); ?>" data-default="<?php echo esc_attr($field_default); ?>"><?php echo esc_textarea((string) $field_value); ?></textarea>
 								<?php if (!empty($field_desc)) : ?>
-									<span class="description customize-control-description"><?php echo esc_html($field_desc); ?></span>
+									<span class="description customize-control-description"><?php echo wp_kses_post($field_desc); ?></span>
 								<?php endif; ?>
 							</label>
 						<?php elseif ('textarea' === $field_type) : ?>
@@ -507,7 +511,7 @@ if (!class_exists('Velocitychild_Repeater_Control') && class_exists('WP_Customiz
 								<span class="velocity-repeater-field-label"><?php echo esc_html($field_label); ?></span>
 								<textarea data-field="<?php echo esc_attr($field_key); ?>" data-default="<?php echo esc_attr($field_default); ?>"><?php echo esc_textarea((string) $field_value); ?></textarea>
 								<?php if (!empty($field_desc)) : ?>
-									<span class="description customize-control-description"><?php echo esc_html($field_desc); ?></span>
+									<span class="description customize-control-description"><?php echo wp_kses_post($field_desc); ?></span>
 								<?php endif; ?>
 							</label>
 						<?php elseif ('select' === $field_type) : ?>
@@ -520,7 +524,7 @@ if (!class_exists('Velocitychild_Repeater_Control') && class_exists('WP_Customiz
 									<?php endforeach; ?>
 								</select>
 								<?php if (!empty($field_desc)) : ?>
-									<span class="description customize-control-description"><?php echo esc_html($field_desc); ?></span>
+									<span class="description customize-control-description"><?php echo wp_kses_post($field_desc); ?></span>
 								<?php endif; ?>
 							</label>
 						<?php else : ?>
@@ -528,7 +532,7 @@ if (!class_exists('Velocitychild_Repeater_Control') && class_exists('WP_Customiz
 								<span class="velocity-repeater-field-label"><?php echo esc_html($field_label); ?></span>
 								<input type="<?php echo esc_attr($field_type); ?>" data-field="<?php echo esc_attr($field_key); ?>" data-default="<?php echo esc_attr($field_default); ?>" value="<?php echo esc_attr((string) $field_value); ?>">
 								<?php if (!empty($field_desc)) : ?>
-									<span class="description customize-control-description"><?php echo esc_html($field_desc); ?></span>
+									<span class="description customize-control-description"><?php echo wp_kses_post($field_desc); ?></span>
 								<?php endif; ?>
 							</label>
 						<?php endif; ?>
